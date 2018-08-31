@@ -53,7 +53,6 @@ defmodule OMG.Watcher.BlockGetter do
     with :ok <- continue do
       response = OMG.Watcher.TransactionDB.update_with(block)
       nil = Enum.find(response, &(!match?({:ok, _}, &1)))
-      _ = TxOutputDB.update_with(block)
       _ = Logger.info(fn -> "Consumed block \##{inspect(blknum)}" end)
       {:ok, next_child} = Eth.RootChain.get_current_child_block()
       {state, blocks_numbers} = Core.get_new_blocks_numbers(state, next_child)

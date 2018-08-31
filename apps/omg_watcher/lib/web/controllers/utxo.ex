@@ -21,6 +21,7 @@ defmodule OMG.Watcher.Web.Controller.Utxo do
 
   alias OMG.API.Crypto
   alias OMG.API.Utxo
+  alias OMG.Watcher.TransactionDB
   alias OMG.Watcher.TxOutputDB
   alias OMG.Watcher.Web.View
 
@@ -56,6 +57,9 @@ defmodule OMG.Watcher.Web.Controller.Utxo do
   defp respond({:error, code}, conn) do
     handle_error(conn, code)
   end
+
+  defp get_pos(nil, oindex), do: Utxo.position(0, 0, oindex)
+  defp get_pos(%TransactionDB{blknum: blknum, txindex: txindex}, oindex), do: Utxo.position(blknum, txindex, oindex)
 
   def swagger_definitions do
     %{
