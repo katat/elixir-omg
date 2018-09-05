@@ -31,23 +31,10 @@ defmodule OMG.Watcher.Web.Controller.TransactionTest do
     test "transaction/:id endpoint returns expected transaction format", %{alice: alice} do
       [
         ok: %TransactionDB{
-          amount1: amount1,
-          amount2: amount2,
-          blknum1: blknum1,
-          blknum2: blknum2,
-          cur12: cur12,
-          newowner1: newowner1,
-          newowner2: newowner2,
-          oindex1: oindex1,
-          oindex2: oindex2,
-          sig1: sig1,
-          sig2: sig2,
-          spender1: spender1,
-          txblknum: txblknum,
-          txid: txid,
+          blknum: blknum,
           txindex: txindex,
-          txindex1: txindex1,
-          txindex2: txindex2
+          txhash: txhash,
+
         }
       ] =
         TransactionDB.update_with(%{
@@ -57,42 +44,21 @@ defmodule OMG.Watcher.Web.Controller.TransactionTest do
           number: 1
         })
 
-      newowner1 = Base.encode16(newowner1)
-      newowner2 = Base.encode16(newowner2)
-      txid = Base.encode16(txid)
-      cur12 = Base.encode16(cur12)
-      sig1 = Base.encode16(sig1)
-      sig2 = Base.encode16(sig2)
-      spender1 = Base.encode16(spender1)
+      txhash = Base.encode16(txhash)
 
       assert %{
                "data" => %{
-                 "amount1" => amount1,
-                 "amount2" => amount2,
-                 "blknum1" => blknum1,
-                 "blknum2" => blknum2,
-                 "cur12" => cur12,
-                 "newowner1" => newowner1,
-                 "newowner2" => newowner2,
-                 "oindex1" => oindex1,
-                 "oindex2" => oindex2,
-                 "sig1" => sig1,
-                 "sig2" => sig2,
-                 "spender1" => spender1,
-                 "spender2" => nil,
-                 "txblknum" => txblknum,
-                 "txid" => txid,
-                 "txindex" => txindex,
-                 "txindex1" => txindex1,
-                 "txindex2" => txindex2
+                 "blknum" => blknum,
+                 "txhash" => txhash,
+                 "txindex" => txindex
                },
                "result" => "success"
-             } == TestHelper.rest_call(:get, "/transaction/#{txid}")
+             } == TestHelper.rest_call(:get, "/transaction/#{txhash}")
     end
 
     @tag fixtures: [:phoenix_ecto_sandbox]
     test "transaction/:id endpoint returns error for non exsiting transaction" do
-      txid = "055673FF58D85BFBF6844BAD62361967C7D19B6A4768CE4B54C687B65728D721"
+      txhash = "055673FF58D85BFBF6844BAD62361967C7D19B6A4768CE4B54C687B65728D721"
 
       assert %{
                "data" => %{
@@ -100,7 +66,7 @@ defmodule OMG.Watcher.Web.Controller.TransactionTest do
                  "description" => "Transaction doesn't exist for provided search criteria"
                },
                "result" => "error"
-             } == TestHelper.rest_call(:get, "/transaction/#{txid}")
+             } == TestHelper.rest_call(:get, "/transaction/#{txhash}")
     end
   end
 end
