@@ -121,6 +121,7 @@ defmodule OMG.Watcher.Fixtures do
   end
 
   deffixture watcher(db_initialized, root_chain_contract_config) do
+    IO.puts "--- in watcher"
     :ok = root_chain_contract_config
     :ok = db_initialized
     {:ok, started_apps} = Application.ensure_all_started(:omg_db)
@@ -136,6 +137,8 @@ defmodule OMG.Watcher.Fixtures do
   end
 
   deffixture watcher_sandbox(watcher) do
+    IO.puts "--- in watcher_sandbox"
+
     :ok = watcher
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(OMG.Watcher.Repo, ownership_timeout: 90_000)
     Ecto.Adapters.SQL.Sandbox.mode(OMG.Watcher.Repo, {:shared, self()})
@@ -145,14 +148,20 @@ defmodule OMG.Watcher.Fixtures do
   deffixture phoenix_ecto_sandbox do
     import Supervisor.Spec
 
+    IO.puts "--- in fixture phoenix_ecto_sandbox"
+    IO.inspect Application.started_applications()
     {:ok, pid} =
       Supervisor.start_link(
         [supervisor(OMG.Watcher.Repo, []), supervisor(OMG.Watcher.Web.Endpoint, [])],
         strategy: :one_for_one,
         name: OMG.Watcher.Supervisor
       )
+    IO.puts "--- supervisor started"
+    IO.inspect Application.started_applications()
 
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(OMG.Watcher.Repo)
+    IO.puts "--- repo checkouted"
+
     # setup and body test are performed in one process, `on_exit` is performed in another
     on_exit(fn ->
       TestHelper.wait_for_process(pid)

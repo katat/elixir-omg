@@ -7,9 +7,16 @@ config :omg_watcher, OMG.Watcher.Web.Endpoint,
   server: false
 
 # Configure your database
+# config :omg_watcher, OMG.Watcher.Repo,
+#   adapter: Sqlite.Ecto2,
+#   database: "/tmp/omisego/ecto_simple_" <> Integer.to_string(:rand.uniform(10_000_000)) <> ".sqlite3"
 config :omg_watcher, OMG.Watcher.Repo,
-  adapter: Sqlite.Ecto2,
-  database: "/tmp/omisego/ecto_simple_" <> Integer.to_string(:rand.uniform(10_000_000)) <> ".sqlite3"
+  adapter: Ecto.Adapters.Postgres,
+  username: "omisego_dev",
+  password: "omisego_dev",
+  database: "omisego_test",
+  hostname: "localhost",
+  pool_size: 10
 
 config :omg_watcher, OMG.Watcher.Repo, pool: Ecto.Adapters.SQL.Sandbox
 
